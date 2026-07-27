@@ -1,0 +1,60 @@
+generated: '2026-07-27'
+method: searched
+source: >-
+  Live anonymous HTTP requests to https://ocpi.podenergy.com, captured verbatim on
+  2026-07-27.
+note: >-
+  Real captured responses, not authored samples. Pod publishes no OpenAPI and no
+  examples, so these four files are the complete set of API payloads an unaffiliated
+  caller can actually obtain from Pod. Every byte was returned by Pod's own service.
+examples:
+- file: pod-point-ocpi-versions.json
+  api: pod-point:pod-point-ocpi-cpo-api
+  operation: GET /ocpi/cpo/versions
+  url: https://ocpi.podenergy.com/ocpi/cpo/versions
+  status: 200
+  content_type: application/json
+  captured: '2026-07-27'
+  description: >-
+    OCPI version negotiation. Advertises exactly one supported version, 2.2.1, with
+    the URL of its version-detail document. Wrapped in the OCPI success envelope
+    (status_code 1000).
+- file: pod-point-ocpi-version-detail.json
+  api: pod-point:pod-point-ocpi-cpo-api
+  operation: GET /ocpi/cpo/2.2.1
+  url: https://ocpi.podenergy.com/ocpi/cpo/2.2.1
+  status: 200
+  content_type: application/json
+  captured: '2026-07-27'
+  description: >-
+    OCPI version detail. Eight endpoint entries: cdrs, credentials, locations,
+    sessions and tariffs in the SENDER role; commands, credentials and tokens in the
+    RECEIVER role. This module directory is the closest thing to a contract Pod
+    publishes for the API.
+- file: pod-point-ocpi-unauthorized.json
+  api: pod-point:pod-point-ocpi-cpo-api
+  operation: GET /ocpi/cpo/2.2.1/locations
+  url: https://ocpi.podenergy.com/ocpi/cpo/2.2.1/locations
+  status: 401
+  content_type: application/json
+  captured: '2026-07-27'
+  description: >-
+    The canonical anonymous refusal. Identical in shape for /tariffs, /sessions, /cdrs
+    and /credentials, and unchanged by query parameters. OCPI status_code 2000.
+- file: pod-point-ocpi-health.json
+  api: pod-point:pod-point-ocpi-cpo-api
+  operation: GET /health
+  url: https://ocpi.podenergy.com/health
+  status: 200
+  content_type: application/json
+  captured: '2026-07-27'
+  description: >-
+    Service health check. Anonymous and working, but it is a liveness probe, not a
+    status page — no incident history, no uptime record, no subscription.
+coverage:
+  anonymous_operations_available: 3
+  operations_returning_data: 0
+  note: >-
+    Three anonymous endpoints answer with content, and none of them returns charge
+    point, tariff, session or CDR data. The gap between "the interface is up" and "the
+    data is reachable" is the entire Pod finding.

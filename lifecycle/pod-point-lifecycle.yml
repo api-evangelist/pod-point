@@ -1,0 +1,111 @@
+generated: '2026-07-27'
+method: searched
+source: >-
+  Live probes of every Pod host on 2026-07-27, npm registry publish history, and the
+  OCPI 2.2.1 specification.
+note: >-
+  Pod publishes no versioning policy, no deprecation policy, no SLA and no status page.
+  What follows is what the wire and the registries actually show. The absences below
+  are recorded findings, not gaps in the research.
+versioning:
+  scheme: negotiated
+  standard: OCPI version negotiation
+  current: 2.2.1
+  discovery: https://ocpi.podenergy.com/ocpi/cpo/versions
+  detail: https://ocpi.podenergy.com/ocpi/cpo/2.2.1
+  policy_url: null
+  description: >-
+    The live API does not carry a Pod-defined version scheme. It uses OCPI's own
+    version negotiation: a client GETs the versions endpoint, receives the list of
+    supported versions with a URL for each, then GETs the version-detail endpoint to
+    learn the module set. Only one version is advertised — 2.2.1. This is the one
+    genuinely good lifecycle property Pod has, and it comes from the standard rather
+    than from anything Pod authored.
+  versions_advertised:
+  - version: '2.2.1'
+    url: https://ocpi.podenergy.com/ocpi/cpo/2.2.1
+    status: current
+deprecation:
+  policy_url: null
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  note: >-
+    No deprecation policy exists on any Pod domain, and no RFC 8594 Sunset or
+    Deprecation header was observed on any response. No `Deprecation` pointer is
+    emitted in apis.yml because there is no policy to point at. Pod's actual
+    deprecation behaviour, observed rather than documented, is hard cutover with no
+    notice — see `observed_retirements` below.
+observed_retirements:
+- surface: https://ocpi.pod-point.com
+  status: 502
+  observed: '2026-07-27'
+  behaviour: broken
+  note: >-
+    Pre-rebrand OCPI host. Still resolves and is still fronted by CloudFront, but the
+    origin is gone. Returns "CloudFront wasn't able to resolve the origin domain name."
+    Any roaming partner still pointed at it gets a 502 rather than a redirect to the
+    working ocpi.podenergy.com host. Version negotiation on the new host works; the old
+    host does not fail gracefully.
+- surface: https://api.pod-point.com
+  status: 403
+  observed: '2026-07-27'
+  behaviour: decommissioned
+  note: >-
+    The Pod Point Network API v3/v5 host. Every path now returns S3 AccessDenied XML
+    through CloudFront. Pod's own published npm SDKs (@pod-point/api3-js v6.4.2,
+    @pod-point/api5-js v1.2.0) still hard-code this host as their default base URL and
+    are still installable from npm. The client libraries outlived the API.
+- surface: https://rfid-api.pod-point.com
+  status: 000
+  observed: '2026-07-27'
+  behaviour: decommissioned
+  note: >-
+    The Pod Point RFID API host no longer resolves in DNS. @pod-point/rfid-api-js
+    v1.0.3 remains published on npm targeting it.
+- surface: https://pod-point.com
+  status: 301
+  observed: '2026-07-27'
+  behaviour: redirected
+  note: >-
+    Following the February 2026 rebrand from Pod Point to Pod, the primary domain
+    301-redirects to podenergy.com. This one was handled correctly.
+sla:
+  url: null
+  uptime_target: null
+  published: false
+  note: No SLA, uptime commitment or support-response target is published for any API.
+status_page:
+  url: null
+  published: false
+  probed:
+  - url: https://status.pod-point.com/
+    status: 000
+    note: DNS does not resolve.
+  - url: https://status.podenergy.com/
+    status: 000
+    note: DNS does not resolve.
+  health_endpoints:
+  - url: https://ocpi.podenergy.com/health
+    status: 200
+    body: '{"status":"ok","info":{"ocpi":{"status":"up"}},"error":{},"details":{"ocpi":{"status":"up"}}}'
+    note: >-
+      A machine health check, not a status page. It is anonymous and it works, but it
+      publishes no incident history, no uptime record and no subscription channel.
+      Captured at examples/pod-point-ocpi-health.json.
+  - url: https://mobile-api.pod-point.com/health
+    status: 200
+    body: '{"status":"ok","info":{},"error":{},"details":{}}'
+  note: >-
+    No `StatusPage` pointer is emitted in apis.yml. A /health endpoint is not a status
+    page and claiming one would be fabrication.
+changelog:
+  url: null
+  published: false
+  note: >-
+    No API changelog, release notes or versioning history is published. podenergy.com/news
+    is a corporate/marketing newsroom, already wired as `Blog`, and carries no API
+    release information. The only dated release history that exists for anything Pod
+    ships is npm and Packagist publish history for the client libraries, catalogued in
+    packages/pod-point-packages.yml.
+deprecated_operations: []

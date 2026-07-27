@@ -1,0 +1,90 @@
+generated: '2026-07-27'
+method: searched
+source: npm registry (@pod-point scope), github.com/Pod-Point
+note: >-
+  Pod publishes a real family of first-party, client-side UI component libraries on
+  npm. They are front-end building blocks for Pod's own web properties rather than
+  embeddable widgets offered to third-party developers — there is no documented
+  embed/integration story, no hosted loader script and no developer portal describing
+  them. Catalogued because they are genuinely published, first-party and installable;
+  characterised honestly as internal-facing.
+audience: internal-and-public-npm
+embeddable_for_third_parties: false
+families:
+- name: UI toolkit
+  description: Prototyping/design-system frameworks carrying Pod's base styles and components.
+  components:
+  - name: "@pod-point/pod-point-ui-toolkit"
+    url: https://www.npmjs.com/package/@pod-point/pod-point-ui-toolkit
+    version: 2.13.0
+    last_published: '2024-01-24'
+    source: https://github.com/Pod-Point/pod-point-ui-toolkit
+    description: >-
+      A prototyping framework based on the Pod Point website, used to get a project
+      off the ground quickly. The most recently maintained package in the family.
+  - name: "@pod-point/ui-toolkit"
+    url: https://www.npmjs.com/package/@pod-point/ui-toolkit
+    version: 3.2.2
+    last_published: '2022-06-30'
+    description: Earlier rapid-prototyping framework. Superseded by pod-point-ui-toolkit.
+- name: React components
+  components:
+  - name: "@pod-point/react-dom-components"
+    url: https://www.npmjs.com/package/@pod-point/react-dom-components
+    version: 1.0.4
+    last_published: '2022-04-06'
+    source: https://github.com/Pod-Point/react-dom-components
+    description: >-
+      A library of base styles and React components designed for rapid prototyping
+      against the Pod Point design language.
+- name: Form and data components
+  components:
+  - name: "@pod-point/form-fields"
+    url: https://www.npmjs.com/package/@pod-point/form-fields
+    version: 1.3.0
+    last_published: '2022-06-12'
+    description: Focus and change form-field interactions.
+  - name: "@pod-point/datagrid-js"
+    url: https://www.npmjs.com/package/@pod-point/datagrid-js
+    version: 0.2.6
+    last_published: '2022-06-12'
+    source: https://github.com/Pod-Point/datagrid-js
+    description: AJAX-enabled data grids with searching and filtering.
+  - name: pod-point/form-components
+    registry: packagist
+    url: https://packagist.org/packages/pod-point/form-components
+    description: >-
+      The server-side sibling — Blade form components for Laravel. Listed here for
+      completeness and catalogued in packages/pod-point-packages.yml.
+- name: Site utilities
+  components:
+  - name: "@pod-point/cookie-notice.js"
+    url: https://www.npmjs.com/package/@pod-point/cookie-notice.js
+    version: 2.0.1
+    last_published: '2022-06-12'
+    source: https://github.com/Pod-Point/cookie-notice.js
+    description: Snippet that displays the Pod Point EU cookie notice banner.
+  - name: "@pod-point/tracking.js"
+    url: https://www.npmjs.com/package/@pod-point/tracking.js
+    version: 6.0.0-alpha-4
+    last_published: '2024-03-12'
+    source: https://github.com/Pod-Point/tracking.js
+    description: Wrapper for handling Segment tracking events.
+  - name: "@pod-point/settings"
+    url: https://www.npmjs.com/package/@pod-point/settings
+    version: 1.2.0
+    description: Common Pod Point site settings.
+  - name: "@pod-point/utils"
+    url: https://www.npmjs.com/package/@pod-point/utils
+    version: 1.5.0
+    description: Common JS utilities.
+loaders: []
+hosted_surfaces: []
+summary:
+  total: 11
+  families: 4
+  most_recent_activity: '2024-03-12'
+  caveat: >-
+    Nothing in this family is maintained past March 2024, and most stopped in 2022.
+    There is no documentation site, no Storybook and no usage guide published for any
+    of them.

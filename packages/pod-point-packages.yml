@@ -1,0 +1,212 @@
+generated: '2026-07-27'
+method: searched
+source: npm registry, Packagist, github.com/Pod-Point
+note: >-
+  Pod Point publishes real, first-party client libraries under the @pod-point npm
+  scope and the pod-point Packagist vendor. THREE of them are genuine API client
+  wrappers for Pod Point's own APIs — api3-js, api5-js and rfid-api-js — which the
+  2026-07-27 review did not surface because it only probed web hosts, not registries.
+  IMPORTANT CAVEAT, recorded honestly: the hosts these SDKs target are decommissioned.
+  api.pod-point.com (the base URL hard-coded in both api3-js and api5-js) returns
+  HTTP 403 S3 AccessDenied on every path, and rfid-api.pod-point.com no longer
+  resolves in DNS. These are published, official, and no longer functional against a
+  live backend. They are catalogued as `status: legacy`. None of them targets the one
+  live API (the OCPI 2.2.1 CPO service), for which Pod ships no client library.
+packages:
+- language: javascript
+  registry: npm
+  name: "@pod-point/api3-js"
+  url: https://www.npmjs.com/package/@pod-point/api3-js
+  install: npm install --save @pod-point/api3-js
+  official: true
+  kind: api-client
+  status: legacy
+  version: 6.4.2
+  last_published: '2023-04-20'
+  license: MIT
+  source: https://github.com/Pod-Point/api3-js
+  description: >-
+    A JavaScript/TypeScript wrapper for the Pod Point Network RESTful API v3 onward.
+    Ships repositories, services, models and factories covering accounts, cards,
+    charges, charge schedules, energy suppliers, organisations, payments, pods,
+    sessions, tariffs, transactions, users and vehicles.
+  base_url: https://api.pod-point.com
+  path_prefix: /v3/
+  base_url_status: 403
+  base_url_note: >-
+    Hard-coded default in lib/Client.js. Host now returns S3 AccessDenied through
+    CloudFront on every path, including /v3/ and /v3/auth.
+- language: javascript
+  registry: npm
+  name: "@pod-point/api5-js"
+  url: https://www.npmjs.com/package/@pod-point/api5-js
+  install: npm install --save @pod-point/api5-js
+  official: true
+  kind: api-client
+  status: legacy
+  version: 1.2.0
+  last_published: '2022-04-06'
+  source: https://github.com/Pod-Point/api3-js
+  description: >-
+    A JavaScript API wrapper for the V5 Pod Point API. Much narrower than api3-js —
+    exposes only the auth and energy endpoints.
+  base_url: https://api.pod-point.com
+  path_prefix: /v5/
+  base_url_status: 403
+- language: javascript
+  registry: npm
+  name: "@pod-point/rfid-api-js"
+  url: https://www.npmjs.com/package/@pod-point/rfid-api-js
+  install: npm install --save @pod-point/rfid-api-js
+  official: true
+  kind: api-client
+  status: legacy
+  version: 1.0.3
+  last_published: '2022-04-06'
+  source: https://github.com/Pod-Point/rfid-api-js
+  description: >-
+    A JavaScript API wrapper for the Pod Point RFID API. Exposes a card repository
+    for RFID charge authorisation cards.
+  base_url: https://rfid-api.pod-point.com
+  path_prefix: /
+  base_url_status: 000
+  base_url_note: Hostname does not resolve in DNS as of 2026-07-27.
+- language: javascript
+  registry: npm
+  name: "@pod-point/app-upgrade-react-native-sdk"
+  url: https://www.npmjs.com/package/@pod-point/app-upgrade-react-native-sdk
+  install: npm install --save @pod-point/app-upgrade-react-native-sdk
+  official: true
+  kind: mobile-sdk
+  version: 1.0.4
+  last_published: '2023-06-02'
+  source: https://github.com/Pod-Point/app-upgrade-react-native-sdk
+  description: React Native SDK used by the Pod mobile app to prompt in-app upgrades.
+- language: javascript
+  registry: npm
+  name: "@pod-point/typescript"
+  url: https://www.npmjs.com/package/@pod-point/typescript
+  install: npm install --save @pod-point/typescript
+  official: true
+  kind: http-client-core
+  description: >-
+    The shared HTTP client, Repository/Service base classes and PayloadTransformer
+    that api3-js, api5-js and rfid-api-js all build on. Not an API client itself.
+- language: php
+  registry: packagist
+  name: pod-point/laravel-aws-pubsub
+  url: https://packagist.org/packages/pod-point/laravel-aws-pubsub
+  install: composer require pod-point/laravel-aws-pubsub
+  official: true
+  kind: infrastructure
+  downloads: 101331
+  description: >-
+    Laravel broadcasting and queue driver that publishes and listens to events over
+    AWS SNS/EventBridge. Pod Point's most-installed open source package.
+- language: php
+  registry: packagist
+  name: pod-point/laravel-monolog-kinesis
+  url: https://packagist.org/packages/pod-point/laravel-monolog-kinesis
+  install: composer require pod-point/laravel-monolog-kinesis
+  official: true
+  kind: infrastructure
+  downloads: 54398
+  description: Forwards Laravel application logs to an AWS Kinesis stream.
+- language: php
+  registry: packagist
+  name: pod-point/laravel-mail-export
+  url: https://packagist.org/packages/pod-point/laravel-mail-export
+  install: composer require pod-point/laravel-mail-export
+  official: true
+  kind: infrastructure
+  downloads: 53497
+  description: Mailable trait and interface to export sent mail to a storage disk.
+- language: php
+  registry: packagist
+  name: pod-point/laravel-passport-auth
+  url: https://packagist.org/packages/pod-point/laravel-passport-auth
+  install: composer require pod-point/laravel-passport-auth
+  official: true
+  kind: auth
+  downloads: 30544
+  description: Laravel Passport OAuth2 authentication helper.
+- language: php
+  registry: packagist
+  name: pod-point/laravel-cognito-auth
+  url: https://packagist.org/packages/pod-point/laravel-cognito-auth
+  install: composer require pod-point/laravel-cognito-auth
+  official: true
+  kind: auth
+  downloads: 11242
+  description: AWS Cognito authentication driver for Laravel.
+- language: php
+  registry: packagist
+  name: pod-point/laravel-configcat
+  url: https://packagist.org/packages/pod-point/laravel-configcat
+  install: composer require pod-point/laravel-configcat
+  official: true
+  kind: infrastructure
+  downloads: 6463
+  description: Feature flags with Laravel using ConfigCat.
+- language: php
+  registry: packagist
+  name: pod-point/laravel-amazon-es
+  url: https://packagist.org/packages/pod-point/laravel-amazon-es
+  install: composer require pod-point/laravel-amazon-es
+  official: true
+  kind: infrastructure
+  downloads: 7182
+  description: Amazon Elasticsearch Service integration for Laravel.
+- language: php
+  registry: packagist
+  name: pod-point/laravel-javascript-lang
+  url: https://packagist.org/packages/pod-point/laravel-javascript-lang
+  install: composer require pod-point/laravel-javascript-lang
+  official: true
+  kind: infrastructure
+  downloads: 4676
+  description: Exposes Laravel translations and routes to JavaScript.
+- language: php
+  registry: packagist
+  name: pod-point/countries
+  url: https://packagist.org/packages/pod-point/countries
+  install: composer require pod-point/countries
+  official: true
+  kind: reference-data
+  downloads: 5347
+  description: Full and partial country reference data for Laravel and Lumen.
+- language: php
+  registry: packagist
+  name: pod-point/form-components
+  url: https://packagist.org/packages/pod-point/form-components
+  install: composer require pod-point/form-components
+  official: true
+  kind: ui
+  downloads: 8098
+  description: Commonly used Blade form components.
+summary:
+  total: 15
+  official: 15
+  api_clients: 3
+  api_clients_live: 0
+  languages: [javascript, php]
+  registries: [npm, packagist]
+  no_client_for_live_api: >-
+    Pod ships no client library for the OCPI 2.2.1 CPO API at ocpi.podenergy.com,
+    which is the only live API in apis.yml. OCPI roaming partners use generic
+    third-party OCPI libraries, none of them published by Pod.
+  not_found:
+    - registry: pypi
+      note: No first-party Pod Point package found.
+    - registry: maven-central
+      note: No first-party Pod Point package found.
+    - registry: nuget
+      note: No first-party Pod Point package found.
+    - registry: rubygems
+      note: No first-party Pod Point package found.
+    - registry: crates.io
+      note: No first-party Pod Point package found.
+    - registry: pkg.go.dev
+      note: >-
+        github.com/Pod-Point/go-queue-worker exists as a public repo but is not
+        published as a tagged, documented Go module for third-party consumption.

@@ -1,0 +1,122 @@
+generated: '2026-07-27'
+method: derived
+source: >-
+  Live anonymous responses captured from https://ocpi.podenergy.com on 2026-07-27,
+  plus the OCPI 2.2.1-d2 status code registry.
+format: ocpi-status-code
+note: >-
+  NOT RFC 9457. Pod's live API returns the OCPI envelope, which carries the error in a
+  numeric `status_code` field in a normal application/json body alongside the HTTP
+  status. Only the two codes marked `observed: true` were seen on the wire from Pod;
+  the rest are the OCPI 2.2.1 registry the service implements, cited to the standard
+  and marked `observed: false`. Nothing here is invented — Pod publishes no error
+  reference of its own.
+envelope:
+  content_type: application/json
+  fields:
+  - name: status_code
+    type: integer
+    description: OCPI status code. 1000 is success; 2xxx client, 3xxx server, 4xxx hub.
+  - name: status_message
+    type: string
+    description: Human-readable message accompanying the status code.
+  - name: timestamp
+    type: string
+    format: ISO 8601 UTC
+  - name: data
+    type: object|array
+    description: Present on success only. Absent on error responses.
+  example_success: '{"data":[...],"status_code":1000,"status_message":"Success","timestamp":"2026-07-27T21:12:37.887Z"}'
+  example_error: '{"status_code":2000,"status_message":"Unauthorized","timestamp":"2026-07-27T21:12:38.358Z"}'
+problems:
+- status_code: 1000
+  http_status: 200
+  title: Success
+  class: success
+  observed: true
+  source_operation: GET /ocpi/cpo/versions, GET /ocpi/cpo/2.2.1
+  captured: examples/pod-point-ocpi-versions.json
+- status_code: 2000
+  http_status: 401
+  title: Unauthorized
+  class: client-error
+  observed: true
+  source_operation: >-
+    GET /ocpi/cpo/2.2.1/locations, /tariffs, /sessions, /cdrs, /credentials — every
+    data module returns this to an anonymous caller.
+  captured: examples/pod-point-ocpi-unauthorized.json
+  meaning: >-
+    In OCPI 2.2.1, 2000 is the generic client-error code. Pod returns it with HTTP 401
+    and the message "Unauthorized" when no valid credentials token is presented.
+  remediation: >-
+    Present an OCPI credentials token in an `Authorization: Token <base64>` header.
+    Obtaining one requires a bilateral credentials-module handshake with Pod; there is
+    no self-service route. See authentication/pod-point-authentication.yml.
+- status_code: 2001
+  title: Invalid or missing parameters
+  class: client-error
+  observed: false
+  source: OCPI 2.2.1-d2 status code registry
+- status_code: 2002
+  title: Not enough information
+  class: client-error
+  observed: false
+  source: OCPI 2.2.1-d2 status code registry
+- status_code: 2003
+  title: Unknown Location
+  class: client-error
+  observed: false
+  source: OCPI 2.2.1-d2 status code registry
+- status_code: 2004
+  title: Duplicate Token ID
+  class: client-error
+  observed: false
+  source: OCPI 2.2.1-d2 status code registry
+- status_code: 3000
+  title: Generic server error
+  class: server-error
+  observed: false
+  source: OCPI 2.2.1-d2 status code registry
+- status_code: 3001
+  title: Unable to use the client's API
+  class: server-error
+  observed: false
+  source: OCPI 2.2.1-d2 status code registry
+- status_code: 3002
+  title: Unsupported version
+  class: server-error
+  observed: false
+  source: OCPI 2.2.1-d2 status code registry
+- status_code: 3003
+  title: No matching endpoints or expected endpoints missing between parties
+  class: server-error
+  observed: false
+  source: OCPI 2.2.1-d2 status code registry
+transport_errors:
+- http_status: 404
+  observed: true
+  scope: ocpi.podenergy.com
+  note: >-
+    Returned for /ocpi/versions, /versions, /ocpi/emsp/versions, /ocpi/open/versions,
+    /ocpi/opendata/versions, /openapi.json, /swagger.json, /api-docs and /docs. Plain
+    404, not an OCPI envelope.
+- http_status: 502
+  observed: true
+  scope: ocpi.pod-point.com
+  note: >-
+    The pre-rebrand OCPI hostname is still in DNS and still fronted by CloudFront, but
+    its origin is gone: "CloudFront wasn't able to resolve the origin domain name."
+    Roaming partners still pointed at the old host get a 502, not a redirect.
+- http_status: 403
+  observed: true
+  scope: api.pod-point.com
+  note: >-
+    S3 AccessDenied XML through CloudFront on every path. The legacy consumer API host
+    the published @pod-point/api3-js and api5-js SDKs target no longer serves an API.
+- http_status: 404
+  observed: true
+  scope: mobile-api.pod-point.com
+  note: >-
+    NestJS not-found envelope, a different shape entirely:
+    {"message":"Cannot GET ...","error":"Not Found","statusCode":404}. This is the
+    undocumented mobile backend, recorded as an observation and not listed as an API.

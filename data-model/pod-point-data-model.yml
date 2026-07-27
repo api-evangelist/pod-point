@@ -1,0 +1,327 @@
+generated: '2026-07-27'
+method: derived
+source: >-
+  OCPI 2.2.1 module set enumerated live by Pod's own version-detail endpoint on
+  2026-07-27, plus the TypeScript interfaces shipped in the first-party
+  @pod-point/api3-js v6.4.2 npm package.
+note: >-
+  Two distinct, non-overlapping data models, from two different eras of Pod's API
+  estate. The OCPI model is the LIVE one and its module list is what Pod's own service
+  reports about itself. The Network API model is read directly out of Pod's published
+  SDK type definitions — real first-party declarations, not inference — but its backing
+  host is decommissioned. Neither model is fabricated; entity fields below appear
+  verbatim in one of those two sources.
+models:
+- id: ocpi-cpo
+  name: OCPI 2.2.1 CPO model
+  status: live
+  api: pod-point:pod-point-ocpi-cpo-api
+  source: https://ocpi.podenergy.com/ocpi/cpo/2.2.1
+  source_kind: live-module-directory
+  note: >-
+    Pod enumerates the modules; the object shapes inside them are defined by OCPI
+    2.2.1, not by Pod. Field-level detail is not asserted here because every data
+    module returns 401 anonymously, so no Pod object was ever observed.
+  entities:
+  - name: Location
+    module: locations
+    role: SENDER
+    description: A charging site. Contains EVSEs, which contain Connectors.
+    endpoint: https://ocpi.podenergy.com/ocpi/cpo/2.2.1/locations
+    access: 401
+  - name: EVSE
+    module: locations
+    role: SENDER
+    description: An individually addressable charging point within a Location.
+  - name: Connector
+    module: locations
+    role: SENDER
+    description: A physical socket or attached cable on an EVSE.
+  - name: Tariff
+    module: tariffs
+    role: SENDER
+    endpoint: https://ocpi.podenergy.com/ocpi/cpo/2.2.1/tariffs
+    access: 401
+  - name: Session
+    module: sessions
+    role: SENDER
+    description: An in-progress or completed charging session.
+    endpoint: https://ocpi.podenergy.com/ocpi/cpo/2.2.1/sessions
+    access: 401
+  - name: CDR
+    module: cdrs
+    role: SENDER
+    description: Charge Detail Record — the billable record of a completed session.
+    endpoint: https://ocpi.podenergy.com/ocpi/cpo/2.2.1/cdrs
+    access: 401
+  - name: Credentials
+    module: credentials
+    role: SENDER, RECEIVER
+    description: The bilateral token-exchange handshake object.
+    access: 401
+  - name: Token
+    module: tokens
+    role: RECEIVER
+    description: An eMSP-issued authorisation token the CPO accepts at the charge point.
+  - name: Command
+    module: commands
+    role: RECEIVER
+    description: Remote commands — start/stop session, reserve, unlock connector.
+  relationships:
+  - from: Location
+    to: EVSE
+    type: has_many
+    via: evses
+  - from: EVSE
+    to: Connector
+    type: has_many
+    via: connectors
+  - from: Session
+    to: Location
+    type: belongs_to
+    via: location_id
+  - from: Session
+    to: EVSE
+    type: belongs_to
+    via: evse_uid
+  - from: Session
+    to: Connector
+    type: belongs_to
+    via: connector_id
+  - from: Session
+    to: Tariff
+    type: has_many
+    via: tariff_id
+  - from: CDR
+    to: Session
+    type: belongs_to
+    via: session_id
+  - from: CDR
+    to: Tariff
+    type: has_many
+    via: tariffs
+  - from: Session
+    to: Token
+    type: belongs_to
+    via: auth_id
+  - from: Command
+    to: Token
+    type: belongs_to
+    via: token
+- id: pod-point-network-api-v3
+  name: Pod Point Network API v3 model
+  status: legacy
+  source: "@pod-point/api3-js v6.4.2 — lib/interfaces/**/*Attributes.d.ts"
+  source_kind: first-party-sdk-typedefs
+  base_url: https://api.pod-point.com/v3/
+  base_url_status: 403
+  note: >-
+    The richest picture of Pod's consumer/network domain that exists in public, and it
+    exists only because Pod shipped its TypeScript SDK to npm. The backing host is
+    decommissioned; this is recorded for lineage and for anyone maintaining an
+    integration built against it.
+  path_constants:
+    auth: auth
+    account: account
+    cards: cards
+    charges: charges
+    charge-schedules: charge-schedules
+    charge-override: charge-override
+    energy-suppliers: energy-suppliers
+    email/tokens: email/tokens
+    favourites: favourites
+    feedback: feedback
+    firmware: firmware
+    locales: locales
+    notifications: notifications
+    organisations: organisations
+    password_reset: password_reset
+    password: password
+    payment: payment
+    addresses: addresses
+    pods: pods
+    units: units
+    unit: unit
+    reports: reports
+    search: search
+    security-events: security-events
+    sessions: sessions
+    stats: stats
+    tariffs: tariffs
+    tiers: tiers
+    topup: topup
+    transactions: transactions
+    users: users
+    vehicle: vehicle
+    vehicles: vehicles
+    models: models
+  entities:
+  - name: User
+    id_type: number
+    fields: [id, email, firstName, lastName, role, locale, hasHomeCharge]
+  - name: Account
+    fields: [userId, balance, billingAddress, mobile, phone, currency]
+  - name: PodLocation
+    endpoint: pods
+    id_type: number
+    fields: [id, ppid, name, description, addressId, unitId, location, home, payg, public, evZone, timezone, commissionedAt, lastContactAt, createdAt]
+  - name: PodUnit
+    endpoint: units
+    id_type: number
+    fields: [id, ppid, name, status, architecture]
+  - name: PodConnector
+  - name: PodUnitConnector
+  - name: PodModel
+  - name: PodStatus
+  - name: PodAddress
+    endpoint: addresses
+  - name: Charge
+    id_type: number
+    fields: [id, kwhUsed, energyCost, duration, chargingDuration, startsAt, endsAt, billingEvent, location, pod, organisation, billingAccount]
+  - name: ClaimedCharge
+  - name: ChargeStats
+    endpoint: charges/stats
+  - name: ChargeSchedule
+  - name: ChargeOverride
+  - name: Session
+    id_type: string
+    fields: [id, userId, deviceId, deviceType, createdAt]
+  - name: Tariff
+    fields: [id, name, currency, userId, energySupplierId]
+  - name: TariffTier
+    endpoint: tiers
+  - name: EnergySupplier
+  - name: Card
+    endpoint: cards
+  - name: Payment
+  - name: Transaction
+    fields: [id, amount, currency, exchangeRate, presentmentAmount, presentmentCurrency]
+  - name: Organisation
+  - name: Notification
+  - name: Favourite
+  - name: Locale
+  - name: Firmware
+  - name: SecurityEvent
+  - name: VehicleMake
+    endpoint: vehicles
+  - name: VehicleModel
+    endpoint: models
+  - name: UserPreference
+  - name: AccessToken
+  - name: Authoriser
+  - name: RevenueProfile
+  - name: RevenueProfileTier
+  - name: SearchLocation
+  - name: Socket
+  relationships:
+  - from: User
+    to: Account
+    type: has_one
+    via: account
+  - from: User
+    to: Tariff
+    type: has_one
+    via: tariff
+  - from: User
+    to: PodUnit
+    type: has_one
+    via: unit
+  - from: User
+    to: VehicleModel
+    type: has_one
+    via: vehicle
+  - from: User
+    to: UserPreference
+    type: has_many
+    via: preferences
+  - from: Account
+    to: User
+    type: belongs_to
+    via: userId
+  - from: Account
+    to: Payment
+    type: has_one
+    via: payment
+  - from: PodUnit
+    to: PodLocation
+    type: belongs_to
+    via: pod
+  - from: PodLocation
+    to: PodAddress
+    type: belongs_to
+    via: addressId
+  - from: PodLocation
+    to: PodModel
+    type: has_one
+    via: model
+  - from: PodLocation
+    to: RevenueProfile
+    type: has_one
+    via: price
+  - from: PodLocation
+    to: PodStatus
+    type: has_many
+    via: statuses
+  - from: PodLocation
+    to: PodUnitConnector
+    type: has_many
+    via: unitConnectors
+  - from: PodLocation
+    to: ClaimedCharge
+    type: has_many
+    via: charges
+  - from: PodLocation
+    to: ChargeSchedule
+    type: has_many
+    via: chargeSchedules
+  - from: PodLocation
+    to: ChargeOverride
+    type: has_one
+    via: chargeOverride
+  - from: Charge
+    to: PodLocation
+    type: belongs_to
+    via: location
+  - from: Charge
+    to: PodUnit
+    type: belongs_to
+    via: pod
+  - from: Charge
+    to: Organisation
+    type: belongs_to
+    via: organisation
+  - from: Session
+    to: User
+    type: belongs_to
+    via: userId
+  - from: Tariff
+    to: EnergySupplier
+    type: belongs_to
+    via: energySupplierId
+  - from: Tariff
+    to: TariffTier
+    type: has_many
+    via: tiers
+  - from: Tariff
+    to: User
+    type: belongs_to
+    via: userId
+  - from: VehicleMake
+    to: VehicleModel
+    type: has_many
+    via: models
+  - from: RevenueProfile
+    to: RevenueProfileTier
+    type: has_many
+    via: tiers
+summary:
+  models: 2
+  live_models: 1
+  ocpi_entities: 9
+  legacy_entities: 32
+  overlap: >-
+    The two models describe the same physical world from opposite ends. OCPI exposes
+    the roaming/network view (Location, EVSE, Connector, Session, CDR, Tariff) to other
+    e-mobility operators. The Network API exposed the consumer/owner view (User,
+    Account, PodLocation, PodUnit, Charge, Tariff, Card) to Pod's own apps. Only Tariff
+    and Session appear in both, and they are not the same object.

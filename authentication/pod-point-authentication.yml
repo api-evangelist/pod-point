@@ -1,0 +1,98 @@
+generated: '2026-07-27'
+method: searched
+source: >-
+  Live anonymous probes of https://ocpi.podenergy.com on 2026-07-27, the OCPI 2.2.1-d2
+  specification, and the first-party @pod-point/api3-js and @pod-point/api5-js SDK
+  sources.
+note: >-
+  Derived without an OpenAPI, because Pod publishes none. The auth model for the one
+  live API was established from the wire: every OCPI data module answers HTTP 401 with
+  the OCPI status_code 2000 envelope to an anonymous caller, and no OIDC or OAuth
+  authorization-server metadata exists on any Pod host. The legacy schemes are read
+  out of Pod's own published SDK source, not guessed.
+summary:
+  types: [http]
+  api_key_in: [header]
+  oauth2_flows: []
+  openid_connect: false
+  mutual_tls: false
+  anonymous_surface: >-
+    OCPI version negotiation only (GET /ocpi/cpo/versions and GET /ocpi/cpo/2.2.1).
+    Nothing that carries data is reachable anonymously.
+schemes:
+- name: OCPI credentials token
+  api: pod-point:pod-point-ocpi-cpo-api
+  type: http
+  scheme: Token
+  in: header
+  parameter_name: Authorization
+  format: "Authorization: Token <base64-encoded credentials token>"
+  status: live
+  standard: OCPI 2.2.1, credentials module
+  registration: bilateral
+  self_service: false
+  docs: https://github.com/ocpi/ocpi
+  description: >-
+    OCPI 2.2.1 authenticates with an HTTP Authorization header carrying a Token A /
+    Token B / Token C obtained through the /credentials module handshake. By design
+    the handshake requires both parties to already hold each other's registration
+    details, so there is no anonymous or self-service path to a token. Pod publishes
+    no form, no email address, no partner API page and no criteria for obtaining one;
+    in practice it means a commercial roaming or eMSP relationship.
+  evidence:
+  - probe: GET https://ocpi.podenergy.com/ocpi/cpo/2.2.1/locations
+    status: 401
+    body: '{"status_code":2000,"status_message":"Unauthorized"}'
+  - probe: GET https://ocpi.podenergy.com/ocpi/cpo/2.2.1/tariffs
+    status: 401
+  - probe: GET https://ocpi.podenergy.com/ocpi/cpo/2.2.1/sessions
+    status: 401
+  - probe: GET https://ocpi.podenergy.com/ocpi/cpo/2.2.1/cdrs
+    status: 401
+  - probe: GET https://ocpi.podenergy.com/ocpi/cpo/2.2.1/credentials
+    status: 401
+  - probe: GET https://ocpi.podenergy.com/ocpi/cpo/versions
+    status: 200
+    note: Version negotiation is the only anonymous surface.
+- name: Pod Point Network API v3 bearer token
+  type: http
+  scheme: bearer
+  in: header
+  parameter_name: Authorization
+  status: legacy
+  source: "@pod-point/api3-js v6.4.2 lib/services/AuthenticationService.js"
+  description: >-
+    The retired Pod Point Network API v3 exchanged user credentials for an access
+    token by POST to the `auth` endpoint, then sent `Authorization: <tokenType>
+    <accessToken>` on subsequent calls. The SDK Client was additionally constructed
+    with an accessKey and secretKey pair (Client(accessKey, secretKey, userAgent,
+    domain, prefix)) and bundles crypto-js, indicating a request-signing layer on top
+    of the bearer token.
+  base_url: https://api.pod-point.com/v3/
+  base_url_status: 403
+  note: Host decommissioned — returns S3 AccessDenied on every path. Recorded for lineage only.
+- name: Pod Point API v5 auth
+  type: http
+  scheme: bearer
+  in: header
+  parameter_name: Authorization
+  status: legacy
+  source: "@pod-point/api5-js v1.2.0"
+  base_url: https://api.pod-point.com/v5/
+  base_url_status: 403
+  description: Same auth endpoint pattern as v3, against the /v5/ prefix. Host decommissioned.
+not_present:
+- scheme: oauth2
+  evidence: >-
+    No /.well-known/oauth-authorization-server on podenergy.com, ocpi.podenergy.com or
+    mobile-api.pod-point.com (all 404).
+- scheme: openIdConnect
+  evidence: >-
+    No /.well-known/openid-configuration on any Pod host — podenergy.com 404,
+    ocpi.podenergy.com 404, mobile-api.pod-point.com 404, api.pod-point.com 403.
+- scheme: apiKey self-service
+  evidence: >-
+    No developer portal, no signup, no key issuance page. developer., developers.,
+    docs. and data. do not resolve on either pod-point.com or podenergy.com.
+- scheme: mutualTLS
+  evidence: Not advertised; OCPI 2.2.1 does not require it and no client-cert challenge was observed.

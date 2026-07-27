@@ -1,0 +1,61 @@
+generated: '2026-07-27'
+method: searched
+source: live /.well-known/ probes of every Pod host in apis.yml
+note: >-
+  Probed on 2026-07-27 against the marketing host (podenergy.com), the live OCPI CPO
+  host (ocpi.podenergy.com) and the undocumented mobile backend
+  (mobile-api.pod-point.com). Only one document exists across the whole estate: an
+  RFC 9116 security.txt on podenergy.com. There is no OIDC discovery document, no
+  RFC 8414 authorization-server metadata and no api-catalog anywhere, which is
+  consistent with OCPI credentials-token auth rather than OAuth.
+hosts:
+- host: https://podenergy.com
+  documents:
+  - path: /.well-known/security.txt
+    standard: RFC 9116
+    status: 200
+    file: pod-point-security.txt
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+- host: https://ocpi.podenergy.com
+  note: The live OCPI 2.2.1 CPO API host. Serves no /.well-known/ surface at all.
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+- host: https://mobile-api.pod-point.com
+  note: >-
+    Undocumented mobile backend, recorded as an observation in review.yml and not
+    listed as an API in apis.yml.
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+non_well_known_discovery:
+  note: >-
+    Pod's only real machine-readable discovery surface is not under /.well-known/ —
+    it is the OCPI version-negotiation layer, which answers anonymously and describes
+    its own module set. Captured verbatim in examples/.
+  documents:
+  - path: https://podenergy.com/llms.txt
+    status: 200
+    file: ../llms/pod-point-llms.txt
+    note: Provider-published llms.txt, 36,062 bytes. Marketing and EV guides, no API content.
+  - path: https://ocpi.podenergy.com/ocpi/cpo/versions
+    status: 200
+    file: ../examples/pod-point-ocpi-versions.json
+  - path: https://ocpi.podenergy.com/ocpi/cpo/2.2.1
+    status: 200
+    file: ../examples/pod-point-ocpi-version-detail.json

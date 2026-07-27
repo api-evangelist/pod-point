@@ -1,0 +1,150 @@
+generated: '2026-07-27'
+method: derived
+source: >-
+  Live responses from https://ocpi.podenergy.com captured 2026-07-27, the OCPI 2.2.1-d2
+  specification the service implements, and the first-party @pod-point/api3-js source.
+note: >-
+  Pod publishes no API documentation of any kind, so there are no Pod-authored
+  conventions to search for. Everything below is either observed on the wire or
+  inherited from OCPI 2.2.1, and each entry says which. Where a convention comes from
+  the standard and was NOT independently observed against Pod, it is marked
+  `verified: standard-only` — it is what a client should expect, not something proven.
+authentication:
+  style: token-header
+  header: Authorization
+  format: "Token <base64>"
+  verified: observed
+  detail: See authentication/pod-point-authentication.yml.
+response_envelope:
+  verified: observed
+  description: >-
+    Every OCPI response — success and error alike — is a JSON object with status_code,
+    status_message and timestamp at the top level. Payload sits under `data`, which is
+    absent on errors. The HTTP status and the OCPI status_code are both meaningful and
+    are not redundant.
+  fields: [data, status_code, status_message, timestamp]
+  content_type: application/json
+  example: '{"data":[...],"status_code":1000,"status_message":"Success","timestamp":"2026-07-27T21:12:37.887Z"}'
+error_envelope:
+  verified: observed
+  format: ocpi-status-code
+  rfc9457: false
+  description: >-
+    Same envelope, `data` omitted, status_code in the 2xxx/3xxx/4xxx range. Not
+    application/problem+json. See errors/pod-point-error-codes.yml.
+idempotency:
+  supported: false
+  header: null
+  verified: standard-only
+  description: >-
+    OCPI 2.2.1 defines no idempotency-key mechanism. Write safety in OCPI comes from
+    PUT semantics on client-owned object IDs (the SENDER assigns the id, the RECEIVER
+    stores it under that id), which makes module writes naturally idempotent by
+    identifier rather than by request key. There is no Idempotency-Key header, no
+    request-replay window and no retention policy. No `Idempotency` pointer is emitted
+    in apis.yml — Pod has no idempotency contract to advertise.
+pagination:
+  style: offset-limit
+  verified: standard-only
+  parameters:
+  - name: offset
+    in: query
+    description: Zero-based index of the first object to return.
+  - name: limit
+    in: query
+    description: Maximum objects to return. The server may return fewer and may cap it.
+  - name: date_from
+    in: query
+    description: Only return objects last updated after this ISO 8601 timestamp.
+  - name: date_to
+    in: query
+    description: Only return objects last updated before this ISO 8601 timestamp.
+  response_headers:
+  - name: Link
+    description: RFC 5988 next-page link, rel="next".
+  - name: X-Total-Count
+    description: Total number of objects available.
+  - name: X-Limit
+    description: The limit the server actually applied.
+  note: >-
+    Inherited from OCPI 2.2.1. Could not be confirmed against Pod because every
+    paginated module returns 401 anonymously — GET /ocpi/cpo/2.2.1/locations?limit=2
+    returned HTTP 401 with the same body as the unparameterised request.
+filtering:
+  verified: standard-only
+  description: >-
+    OCPI's only filtering primitives are the date_from/date_to window on list modules.
+    There is no field-selection, sparse-fieldset or expansion mechanism.
+field_expansion:
+  supported: false
+  verified: standard-only
+metadata:
+  supported: false
+  verified: standard-only
+  note: OCPI objects have no free-form customer metadata field.
+request_tracing:
+  verified: standard-only
+  headers:
+  - name: X-Request-ID
+    description: >-
+      OCPI 2.2.1 requires a unique request id on every request, echoed on the response.
+  - name: X-Correlation-ID
+    description: >-
+      OCPI 2.2.1 correlation id, held constant across a chain of related requests
+      through a hub.
+  note: >-
+    Both are OCPI-mandated. Not independently confirmed against Pod, because the
+    anonymous 401 responses carry neither — Pod rejects at the auth layer before the
+    OCPI request-id layer runs.
+observed_response_headers:
+  source: GET /ocpi/cpo/2.2.1/locations (401), captured 2026-07-27
+  headers:
+    strict-transport-security: max-age=31536000; includeSubDomains
+    cache-control: no-store, no-cache, must-revalidate, proxy-revalidate
+    surrogate-control: no-store
+    expires: '0'
+    via: CloudFront
+  note: >-
+    HSTS with a full year max-age and includeSubDomains on the API host, and no-store
+    caching on data modules. Both correct. Note the marketing host podenergy.com
+    carries a much weaker HSTS max-age of 300 seconds — see
+    security/pod-point-domain-security.yml.
+versioning:
+  style: negotiated
+  detail: See lifecycle/pod-point-lifecycle.yml.
+rate_limiting:
+  documented: false
+  signalled: false
+  verified: observed
+  note: >-
+    No RateLimit, X-RateLimit or Retry-After headers were observed on any anonymous
+    response, and no rate-limit policy is published. OCPI 2.2.1 leaves throttling to
+    bilateral agreement between roaming parties. No rate-limits/ artifact is emitted
+    because there is no published limit to record.
+webhooks_and_events:
+  supported: partial
+  verified: standard-only
+  description: >-
+    OCPI 2.2.1 supports a push model in which the CPO PUTs object updates to endpoints
+    the *client* hosts and registers during the credentials handshake. So events exist
+    in the protocol, but the CPO is the sender and there is no Pod-hosted webhook
+    subscription surface, no event catalog and no AsyncAPI. Nothing is emitted to
+    asyncapi/ because there is no Pod-published event surface to describe.
+legacy_conventions:
+  note: >-
+    For lineage only. The retired Pod Point Network API v3, read from
+    @pod-point/api3-js v6.4.2, used a different set of conventions entirely.
+  base_url: https://api.pod-point.com/v3/
+  status: 403
+  envelope: >-
+    Namespaced payloads — the SDK's Repository/Service base classes unwrap a named
+    namespace per resource (for example `users` on the auth-user response, `data` on
+    the v5 energy response) via a PayloadTransformer that converts snake_case wire
+    fields to camelCase model attributes.
+  auth: POST auth for an access token, then Authorization header. Client also took accessKey/secretKey.
+cross_links:
+  errors: errors/pod-point-error-codes.yml
+  authentication: authentication/pod-point-authentication.yml
+  lifecycle: lifecycle/pod-point-lifecycle.yml
+  conformance: conformance/pod-point-conformance.yml
+  data_model: data-model/pod-point-data-model.yml

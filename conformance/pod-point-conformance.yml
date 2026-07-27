@@ -1,0 +1,115 @@
+generated: '2026-07-27'
+method: searched
+source: >-
+  Live anonymous probes of https://ocpi.podenergy.com on 2026-07-27, checked against
+  the OCPI 2.2.1-d2 specification and The Public Charge Point Regulations 2023.
+note: >-
+  Every `conforms: true` below was established by fetching the endpoint, not by
+  reading a compliance claim. Pod makes no compliance claim anywhere — there is no
+  compliance page, no press release and no open data page on the estate. That is
+  precisely why the wire evidence matters.
+standards:
+- id: ocpi-2.2.1
+  name: Open Charge Point Interface 2.2.1
+  conforms: true
+  role: CPO
+  governed_by: EVRoaming Foundation
+  specification: https://evroaming.org/wp-content/uploads/2024/11/OCPI-2.2.1-d2.pdf
+  evidence: >-
+    GET /ocpi/cpo/versions returned HTTP 200 advertising version 2.2.1 with the
+    correct OCPI envelope (status_code 1000 / Success / timestamp). GET /ocpi/cpo/2.2.1
+    returned HTTP 200 enumerating eight endpoint entries with the correct SENDER and
+    RECEIVER role split. This is version negotiation exactly as OCPI 2.2.1 specifies it.
+  captured: examples/pod-point-ocpi-versions.json, examples/pod-point-ocpi-version-detail.json
+  modules:
+    sender: [cdrs, credentials, locations, sessions, tariffs]
+    receiver: [commands, credentials, tokens]
+  caveat: >-
+    Protocol conformance is verified. Data availability is not — every module returns
+    401 to an anonymous caller.
+- id: ocpi-version-negotiation
+  name: OCPI version negotiation (anonymous discovery)
+  conforms: true
+  evidence: >-
+    Both the versions endpoint and the version-detail endpoint answer anonymously and
+    describe the service's own module set, which is the OCPI-specified behaviour.
+- id: uk-public-charge-point-regulations-2023
+  name: The Public Charge Point Regulations 2023 (SI 2023/1168)
+  conforms: partial
+  regulation: https://www.legislation.gov.uk/uksi/2023/1168/contents/made
+  evidence: >-
+    The technical vehicle the regulation's DfT guidance names — OCPI 2.2.1 — is
+    demonstrably built and running on Pod's own host. That limb is satisfied.
+  gap: >-
+    The regulation requires reference and availability data be made available free of
+    charge, in a machine-readable format, and "without any requirement to agree to
+    terms and conditions regarding the use of that data". Every OCPI data module
+    returns HTTP 401 to an anonymous caller, no open or public OCPI token is published
+    anywhere by Pod, and /ocpi/open/versions and /ocpi/opendata/versions both 404.
+    Recorded as `partial` on anonymous evidence. This is a statement about what is
+    externally reachable, not an allegation of non-compliance — a regulator-facing
+    feed or a token granted freely on request would not be visible from outside.
+- id: rfc9116-security-txt
+  name: RFC 9116 security.txt
+  conforms: true
+  evidence: >-
+    https://podenergy.com/.well-known/security.txt returns HTTP 200 and parses, with
+    Contact, Expires, Preferred-Languages and Canonical fields. Expires 2028-03-31.
+  captured: well-known/pod-point-security.txt
+- id: llms-txt
+  name: llms.txt
+  conforms: true
+  evidence: >-
+    https://podenergy.com/llms.txt returns HTTP 200, 36,062 bytes, in valid llms.txt
+    form (H1 name, blockquote summary, sectioned link lists). Content is marketing and
+    EV guides, not API documentation.
+  captured: llms/pod-point-llms.txt
+- id: openapi
+  conforms: false
+  evidence: >-
+    /openapi.json, /openapi.yaml, /swagger.json, /api-docs, /docs and /redoc all
+    return 404 on ocpi.podenergy.com and mobile-api.pod-point.com, and 403 on
+    api.pod-point.com. No OpenAPI or Swagger is published anywhere.
+- id: asyncapi
+  conforms: false
+  evidence: No AsyncAPI document and no published event or webhook surface.
+- id: graphql
+  conforms: false
+  evidence: /graphql returns 404 on ocpi.podenergy.com and mobile-api.pod-point.com.
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: >-
+    Errors use the OCPI status_code envelope (application/json), not
+    application/problem+json. See errors/pod-point-error-codes.yml.
+- id: oauth2
+  conforms: false
+  evidence: No authorization-server metadata; OCPI uses bilaterally exchanged credentials tokens.
+- id: openid-connect
+  conforms: false
+  evidence: /.well-known/openid-configuration returns 404 on every Pod host.
+- id: ocpp
+  name: Open Charge Point Protocol
+  conforms: unknown
+  evidence: >-
+    OCPP is the charger-to-backend protocol and is not exposed publicly by any
+    operator. No OCPP surface was probed or found. Recorded as unknown, not false.
+- id: green-button-espi
+  conforms: false
+  evidence: No version, no reference anywhere on the estate. Out of jurisdiction for the UK.
+- id: iec-cim-61968
+  conforms: false
+  evidence: Not referenced. Pod is a Charge Point Operator, not a network or settlement body.
+- id: ieee-2030.5
+  conforms: false
+  evidence: Not referenced.
+- id: openadr
+  conforms: false
+  evidence: Not referenced.
+compliance_program:
+  published: false
+  note: >-
+    No trust center, no certification page and no named certifications. Probed
+    trust.podenergy.com (does not resolve), podenergy.com/trust (404) and
+    podenergy.com/compliance (404). No SOC 2, ISO 27001, PCI DSS, HIPAA or FedRAMP
+    claim was found. No `Compliance` pointer is emitted, because there is nothing
+    published to point at.

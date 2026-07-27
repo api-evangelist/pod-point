@@ -21,7 +21,7 @@ description: >-
   plumbing that regulation names is verifiably in place at Pod, but the open part of it
   is not obtainable anonymously from outside, and the company publishes no open data
   page, no OCPI token policy and no developer onboarding of any kind.
-image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/groq.png
+image: https://podenergy.com/themes/custom/podpoint/images/favicon-96x96.png
 tags:
 - Energy
 - United Kingdom
@@ -70,6 +70,10 @@ apis:
   - type: Regulation
     url: https://www.legislation.gov.uk/uksi/2023/1168/contents/made
 common:
+- type: VulnerabilityDisclosure
+  url: security/pod-point-vulnerability-disclosure.yml
+- type: DomainSecurity
+  url: security/pod-point-domain-security.yml
 - type: Website
   url: https://podenergy.com/
 - type: Blog
@@ -83,7 +87,33 @@ common:
 - type: Careers
   url: https://careers.pod-point.com/
 - type: Security
-  url: https://podenergy.com/.well-known/security.txt
+  url: https://podenergy.com/security
+- type: SecurityTxt
+  url: well-known/pod-point-security.txt
+- type: WellKnown
+  url: well-known/pod-point-well-known.yml
+- type: Authentication
+  url: authentication/pod-point-authentication.yml
+- type: Conformance
+  url: conformance/pod-point-conformance.yml
+- type: Conventions
+  url: conventions/pod-point-conventions.yml
+- type: ErrorCatalog
+  url: errors/pod-point-error-codes.yml
+- type: Lifecycle
+  url: lifecycle/pod-point-lifecycle.yml
+- type: DataModel
+  url: data-model/pod-point-data-model.yml
+- type: Examples
+  url: examples/pod-point-examples.yml
+- type: Packages
+  url: packages/pod-point-packages.yml
+- type: SDKs
+  url: packages/pod-point-packages.yml
+- type: Components
+  url: components/pod-point-components.yml
+- type: LLMsTxt
+  url: llms/pod-point-llms.txt
 - type: TermsOfService
   url: https://podenergy.com/general-terms-and-conditions
 - type: PrivacyPolicy
