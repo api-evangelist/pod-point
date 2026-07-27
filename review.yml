@@ -1,0 +1,468 @@
+aid: pod-point
+name: Pod Point
+review:
+  question: Does Pod Point publish a documented public API, and does an energy data
+    mandate apply to it in a way it has actually implemented?
+  answer: true
+  date: '2026-07-27'
+  reviewer: API Evangelist
+  homeMarket: United Kingdom
+  tier: ev-charging
+  summary: |
+    Pod Point — now trading as Pod, with pod-point.com 301-redirecting to
+    podenergy.com — publishes no developer portal, no OpenAPI, no Swagger, no Postman
+    collection and no human-readable API documentation of any kind. There is
+    nevertheless one real, live, machine-discoverable API: an OCPI 2.2.1 Charge Point
+    Operator service at https://ocpi.podenergy.com. Its version-negotiation layer
+    answers anonymously and describes its own module set; every module that carries
+    data answers 401 Unauthorized. That is the whole finding in one sentence: the
+    standard-conformant surface Britain's charge point regulations name is
+    demonstrably built and running, and none of the data behind it is reachable
+    without a bilaterally exchanged OCPI token.
+
+mandate:
+  regime: other
+  regimeName: The Public Charge Point Regulations 2023 (SI 2023/1168), United Kingdom
+  status: live-implemented
+  regimeVerbatim: |
+    The obligation that binds Pod is not a consumer data right and not a smart-meter
+    infrastructure duty. It is The Public Charge Point Regulations 2023, SI 2023/1168,
+    made under the Automated and Electric Vehicles Act 2018 and in force from
+    24 November 2023. The regulations place duties on operators of publicly accessible
+    charge points, including that reference data and availability data be made
+    available to the public free of charge, in a machine-readable format, and — the
+    operative phrase — "without any requirement to agree to terms and conditions
+    regarding the use of that data". DfT guidance names the technical vehicle
+    explicitly: charge point operators are to use the Open Charge Point Interface,
+    version 2.2.1, to hold and open that data. Reliability metrics measured through
+    OCPI are reported annually to the Secretary of State, beginning in 2026 for
+    calendar year 2025.
+
+    This is a UK EV-charging open-data mandate. It is emphatically NOT the analogue of
+    the Australian Consumer Data Right. It creates no consumer data portability right,
+    no accreditation scheme, no consent dashboard and no register of accredited
+    recipients. Britain mandated a machine interface on public infrastructure, not a
+    right for an individual to move their own data. Recorded here as regime `other`
+    because none of the enumerated regimes (cdr-energy, green-button-ontario,
+    green-button-voluntary, smart-meter-infrastructure) describes it.
+  howVerified: |
+    VERIFIED AS A LIVE, STANDARDS-CONFORMANT SURFACE — fetched, not claimed. Nothing
+    on podenergy.com or pod-point.com asserts OCPI compliance; there is no compliance
+    page, no press release and no open data page to take on trust. The evidence is the
+    endpoint itself, retrieved anonymously on 2026-07-27:
+
+      GET https://ocpi.podenergy.com/ocpi/cpo/versions  -> HTTP 200
+      {"data":[{"version":"2.2.1","url":"https://ocpi.podenergy.com/ocpi/cpo/2.2.1"}],
+       "status_code":1000,"status_message":"Success",
+       "timestamp":"2026-07-27T13:07:26.016Z"}
+
+      GET https://ocpi.podenergy.com/ocpi/cpo/2.2.1     -> HTTP 200
+      {"data":{"version":"2.2.1","endpoints":[
+        {"identifier":"cdrs","role":"SENDER","url":".../ocpi/cpo/2.2.1/cdrs"},
+        {"identifier":"credentials","role":"SENDER","url":".../ocpi/cpo/2.2.1/credentials"},
+        {"identifier":"locations","role":"SENDER","url":".../ocpi/cpo/2.2.1/locations"},
+        {"identifier":"sessions","role":"SENDER","url":".../ocpi/cpo/2.2.1/sessions"},
+        {"identifier":"tariffs","role":"SENDER","url":".../ocpi/cpo/2.2.1/tariffs"},
+        {"identifier":"commands","role":"RECEIVER","url":".../ocpi/cpo/2.2.1/commands"},
+        {"identifier":"credentials","role":"RECEIVER","url":".../ocpi/cpo/2.2.1/credentials"},
+        {"identifier":"tokens","role":"RECEIVER","url":".../ocpi/cpo/2.2.1/tokens"}]},
+       "status_code":1000,"status_message":"Success",
+       "timestamp":"2026-07-27T13:07:45.649Z"}
+
+      GET https://ocpi.podenergy.com/health -> HTTP 200
+      {"status":"ok","info":{"ocpi":{"status":"up"}},"error":{},
+       "details":{"ocpi":{"status":"up"}}}
+
+    That is version negotiation exactly as OCPI 2.2.1 specifies it, served from Pod's
+    own host, with the correct OCPI envelope (status_code 1000 / Success / timestamp)
+    and the correct SENDER and RECEIVER role split. It is an implementation, not a
+    claim. `live-implemented` is recorded on that basis.
+  implementedButGatedCaveat: |
+    READ THIS BEFORE TREATING `live-implemented` AS COMPLIANCE. The regulation's
+    operative words are "free of charge" and "without any requirement to agree to
+    terms and conditions". Nothing behind the version layer is anonymously reachable.
+    Every data module was probed anonymously on 2026-07-27 and every one returned the
+    same OCPI-shaped refusal:
+
+      GET /ocpi/cpo/2.2.1/locations   -> HTTP 401 {"status_code":2000,"status_message":"Unauthorized"}
+      GET /ocpi/cpo/2.2.1/tariffs     -> HTTP 401 {"status_code":2000,"status_message":"Unauthorized"}
+      GET /ocpi/cpo/2.2.1/sessions    -> HTTP 401 {"status_code":2000,"status_message":"Unauthorized"}
+      GET /ocpi/cpo/2.2.1/cdrs        -> HTTP 401 {"status_code":2000,"status_message":"Unauthorized"}
+      GET /ocpi/cpo/2.2.1/credentials -> HTTP 401 {"status_code":2000,"status_message":"Unauthorized"}
+      GET /ocpi/cpo/2.2.1/locations?limit=2 -> HTTP 401, same body
+
+    No open or public OCPI token is published anywhere by Pod. No /ocpi/open/versions
+    or /ocpi/opendata/versions variant exists (both HTTP 404). There is no open data
+    page on podenergy.com, no mention of OCPI in its navigation, sitemap (368 <loc>
+    entries, grepped) or footer, and no route by which an unaffiliated developer could
+    request a token. So: the OCPI 2.2.1 interface the regulation names is REAL and
+    RUNNING and I fetched it; whether the mandated OPEN limb of that obligation is
+    satisfied is NOT verifiable from outside, and on anonymous evidence alone it is
+    not. Do not read `live-implemented` as "the data is open".
+  brokenLegacyEndpoint: |
+    Worth recording as an artifact of the rebrand. The pre-rebrand OCPI hostname is
+    still in DNS and still fronted by CloudFront, but its origin is gone:
+      https://ocpi.pod-point.com/ocpi/cpo/versions -> HTTP 502
+      "CloudFront wasn't able to resolve the origin domain name."
+    Any roaming partner or data consumer still pointed at ocpi.pod-point.com is
+    getting a 502, not a redirect to the working ocpi.podenergy.com host. Version
+    negotiation on the new host works; the old host does not fail gracefully.
+
+dataStandard:
+  apiStandard: OCPI 2.2.1 (Open Charge Point Interface), Charge Point Operator role
+  detail: |
+    OCPI 2.2.1 is implemented and verified live, in the CPO role, with modules cdrs,
+    credentials, locations, sessions and tariffs as SENDER and commands, credentials
+    and tokens as RECEIVER. That is the one standard reference found anywhere on the
+    estate, and it was found in the wire protocol, not in marketing copy.
+
+    Explicitly NOT found: Green Button or ESPI (no version, no reference); CDR
+    Consumer Data Standards (energy) — out of jurisdiction and out of sector; OpenADR;
+    IEEE 2030.5; IEC CIM 61968/61970; SEP 2.0. OCPP (the charger-to-backend protocol,
+    as distinct from OCPI) is not exposed publicly and no OCPP surface was probed or
+    found. No OpenAPI, AsyncAPI, GraphQL schema or JSON Schema is published:
+    /openapi.json, /swagger.json, /api-docs and /docs return 404 on ocpi.podenergy.com,
+    on mobile-api.pod-point.com and on the marketing site.
+
+accessAndAuth:
+  accessGate: partner-only
+  gated: true
+  authModel: |
+    OCPI credentials tokens, exchanged bilaterally. OCPI 2.2.1 authenticates with an
+    HTTP `Authorization: Token <base64>` header carrying a Token A / Token C obtained
+    through the /credentials module handshake, which by design requires both sides to
+    already hold each other's registration details. Anonymous requests to every data
+    module return HTTP 401 with OCPI status_code 2000.
+
+    No other auth scheme is exposed. There is no API key signup, no OAuth2 authorization
+    server and no OpenID Connect discovery document on any Pod host:
+      https://podenergy.com/.well-known/openid-configuration      -> HTTP 404
+      https://pod-point.com/.well-known/openid-configuration       -> HTTP 404
+      https://mobile-api.pod-point.com/.well-known/openid-configuration -> HTTP 404
+      https://api.pod-point.com/.well-known/openid-configuration   -> HTTP 403 (S3 AccessDenied)
+    A security.txt does exist and parses:
+      https://podenergy.com/.well-known/security.txt -> HTTP 200
+      Contact: https://podenergy.com/security
+      Expires: 2028-03-31T14:00:00.000Z
+      Preferred-Languages: en
+      Canonical: https://podenergy.com/.well-known/security.txt
+  whatADeveloperMustDo: |
+    There is no published route in. To be precise about each possible path:
+
+    1. To read the API's own module list: nothing. GET
+       https://ocpi.podenergy.com/ocpi/cpo/versions anonymously. This is the only
+       thing an unaffiliated developer can obtain.
+    2. To read any actual charge point location, tariff, session or CDR data: obtain
+       an OCPI credentials token from Pod. Pod publishes no form, no email address for
+       it, no partner API page, no terms and no criteria. In practice this means a
+       commercial roaming or eMSP relationship — the pattern visible in Pod's own
+       announcements, e.g. the Zapmap partnership covering public charging payments
+       (https://podenergy.com/news/pod-partners-zapmap-public-ev-charging-payments,
+       HTTP 200). That is why the gate is recorded as `partner-only` rather than
+       `application-approval`: there is no application to make.
+    3. To read a customer's own charging history or home charger usage: use the Pod
+       app. There is no documented API. See dataSplit below.
+    4. To find documentation: there is none. Verified absent, not merely unfound —
+       see the probes block. developer., developers., docs. and data. do not resolve
+       on either pod-point.com or podenergy.com, and /developers, /api, /docs and
+       /open-data all 404.
+
+dataSplit:
+  consumerDataApi: false
+  marketDataOpen: false
+  finding: |
+    Pod is CLOSED ON BOTH SIDES, which is the unusual result. Most organisations in
+    this sector are wide open on one axis and shut on the other; Pod is shut on both,
+    while running the machinery that could open one of them.
+
+    CONSUMER DATA — closed. There is no documented API by which a driver, or a third
+    party acting for a driver, can retrieve that driver's charging sessions, home
+    charger energy consumption or billing. No OAuth, no consent flow, no scopes, no
+    accreditation scheme, because the UK created no such right for EV charging. An
+    undocumented mobile backend exists (see undocumentedMachineSurfaces) and is
+    reachable, but it is unversioned in its published form, undocumented, carries no
+    terms and is not offered to developers; it is recorded as an observation and is
+    NOT listed in apis.yml.
+
+    MARKET / NETWORK DATA — mandated open, not anonymously open. The charge point
+    reference and availability data that SI 2023/1168 requires to be published free
+    and without terms sits behind OCPI module endpoints that return 401 to an
+    anonymous caller. There is no bulk download, no GeoJSON, no CSV, no open data
+    portal and no catalogue entry published by Pod. `market_data_open` is recorded
+    false on the evidence available to an anonymous client, and that recording is a
+    statement about what is reachable, not an allegation about compliance — a
+    regulator-facing feed or a token freely granted on request would not be visible
+    from outside.
+
+    The contrast with the rest of the UK energy stack is the point. NESO publishes a
+    genuinely open, key-free Carbon Intensity API. Elexon publishes Balancing and
+    Settlement data. DNOs run real open data portals. Britain's EV charging tier, the
+    one place where an explicit open-data statute exists, is the tier where an
+    anonymous developer gets a 401.
+
+undocumentedMachineSurfaces:
+  note: |
+    Recorded as observation, NOT listed as an API in apis.yml. These are the backends
+    behind Pod's consumer and installer apps. They answer anonymously at the root, are
+    undocumented, publish no terms, expose no schema and are not offered to developers.
+  probed:
+  - url: https://mobile-api.pod-point.com/
+    status: 200
+    contentType: application/json
+    body: '{"message":"Welcome to the mobile API!"}'
+    note: >-
+      NestJS/Express service (x-powered-by: Express) fronted by CloudFront. Root is
+      anonymous. No documentation surface: /openapi.json, /swagger.json, /api-docs,
+      /docs, /v1, /v4, /v5, /v4/users and /.well-known/openid-configuration all
+      returned 404 with the NestJS not-found envelope
+      {"message":"Cannot GET ...","error":"Not Found","statusCode":404}.
+  - url: https://mobile-api.pod-point.com/health
+    status: 200
+    body: '{"status":"ok","info":{},"error":{},"details":{}}'
+  - url: https://api.pod-point.com/
+    status: 403
+    note: >-
+      The historically reverse-engineered consumer host (api.pod-point.com/v4, /v5,
+      used by community Home Assistant and Python clients) no longer serves an API.
+      Every path returns an S3 AccessDenied XML document through CloudFront
+      (server: AmazonS3, x-amz-bucket-region: eu-west-1). POST /v5/auth -> HTTP 403
+      CloudFront error page. The community integration surface is gone.
+
+probes:
+- url: https://pod-point.com/
+  status: 301
+  note: 'Location: https://podenergy.com — the primary domain now redirects to the
+    post-rebrand domain.'
+- url: https://podenergy.com/
+  status: 200
+- url: https://developer.pod-point.com/
+  status: 000
+  note: DNS does not resolve.
+- url: https://developers.pod-point.com/
+  status: 000
+- url: https://docs.pod-point.com/
+  status: 000
+- url: https://data.pod-point.com/
+  status: 000
+- url: https://open-data.pod-point.com/
+  status: 000
+- url: https://opendata.pod-point.com/
+  status: 000
+- url: https://developer.podenergy.com/
+  status: 000
+- url: https://developers.podenergy.com/
+  status: 000
+- url: https://api.podenergy.com/
+  status: 000
+- url: https://docs.podenergy.com/
+  status: 000
+- url: https://data.podenergy.com/
+  status: 000
+- url: https://status.pod-point.com/
+  status: 000
+- url: https://status.podenergy.com/
+  status: 000
+- url: https://pod-point.com/developers
+  status: 404
+- url: https://pod-point.com/api
+  status: 404
+- url: https://pod-point.com/open-data
+  status: 404
+- url: https://pod-point.com/open-charge-data
+  status: 404
+- url: https://pod-point.com/charge-point-data
+  status: 404
+- url: https://pod-point.com/legal/open-data
+  status: 404
+- url: https://pod-point.com/about/open-data
+  status: 404
+- url: https://pod-point.com/openapi.json
+  status: 404
+- url: https://pod-point.com/swagger.json
+  status: 404
+- url: https://pod-point.com/api-docs
+  status: 404
+- url: https://pod-point.com/.well-known/openid-configuration
+  status: 404
+- url: https://podenergy.com/developers
+  status: 404
+- url: https://podenergy.com/api
+  status: 404
+- url: https://podenergy.com/open-data
+  status: 404
+- url: https://podenergy.com/openapi.json
+  status: 404
+- url: https://podenergy.com/.well-known/openid-configuration
+  status: 404
+- url: https://podenergy.com/.well-known/security.txt
+  status: 200
+  note: Parses. Contact https://podenergy.com/security, expires 2028-03-31.
+- url: https://podenergy.com/security
+  status: 200
+- url: https://podenergy.com/robots.txt
+  status: 200
+  note: Drupal default robots.txt. No API or data paths.
+- url: https://pod-point.com/robots.txt
+  status: 200
+  note: Craft CMS robots.txt. Disallows /cpresources/, /docs/, /component-test-page.
+- url: https://podenergy.com/sitemap.xml
+  status: 200
+  note: >-
+    368 <loc> entries. Grepped for api / data / developer / ocpi / open / partner /
+    integrat. Zero developer, API, OCPI or open-data pages. Only marketing, guides,
+    news and legal.
+- url: https://pod-point.com/sitemaps-1-sitemap.xml
+  status: 200
+  note: Sitemap index with only two child sitemaps (partners, products_structure).
+- url: https://ocpi.podenergy.com/
+  status: 200
+  contentType: text/html
+  note: Body is the 12-byte string "OCPI Service".
+- url: https://ocpi.podenergy.com/ocpi/cpo/versions
+  status: 200
+  note: OCPI version negotiation, anonymous. Advertises 2.2.1. PRIMARY EVIDENCE.
+- url: https://ocpi.podenergy.com/ocpi/cpo/2.2.1
+  status: 200
+  note: OCPI version detail, anonymous. Eight endpoint entries across SENDER/RECEIVER.
+- url: https://ocpi.podenergy.com/health
+  status: 200
+  note: '{"status":"ok","info":{"ocpi":{"status":"up"}},...}'
+- url: https://ocpi.podenergy.com/ocpi/cpo/2.2.1/locations
+  status: 401
+  note: OCPI status_code 2000 Unauthorized.
+- url: https://ocpi.podenergy.com/ocpi/cpo/2.2.1/tariffs
+  status: 401
+- url: https://ocpi.podenergy.com/ocpi/cpo/2.2.1/sessions
+  status: 401
+- url: https://ocpi.podenergy.com/ocpi/cpo/2.2.1/cdrs
+  status: 401
+- url: https://ocpi.podenergy.com/ocpi/cpo/2.2.1/credentials
+  status: 401
+- url: https://ocpi.podenergy.com/ocpi/versions
+  status: 404
+- url: https://ocpi.podenergy.com/versions
+  status: 404
+- url: https://ocpi.podenergy.com/ocpi/emsp/versions
+  status: 404
+  note: No eMSP-role interface is exposed.
+- url: https://ocpi.podenergy.com/ocpi/open/versions
+  status: 404
+- url: https://ocpi.podenergy.com/ocpi/opendata/versions
+  status: 404
+- url: https://ocpi.podenergy.com/openapi.json
+  status: 404
+- url: https://ocpi.podenergy.com/swagger.json
+  status: 404
+- url: https://ocpi.podenergy.com/api-docs
+  status: 404
+- url: https://ocpi.podenergy.com/docs
+  status: 404
+- url: https://ocpi.pod-point.com/ocpi/cpo/versions
+  status: 502
+  note: >-
+    CloudFront "wasn't able to resolve the origin domain name". The pre-rebrand OCPI
+    host is broken, not redirected.
+- url: https://api.pod-point.com/
+  status: 403
+  note: S3 AccessDenied through CloudFront. Legacy consumer API host no longer serves.
+- url: https://mobile-api.pod-point.com/
+  status: 200
+  note: Undocumented mobile backend. Observation only, not listed as an API.
+- url: https://help.pod-point.com/
+  status: 200
+- url: https://careers.pod-point.com/
+  status: 200
+- url: https://shop.podenergy.com/
+  status: 200
+- url: https://github.com/Pod-Point
+  status: 200
+  note: >-
+    9 public repositories, all Laravel/PHP/Go internal engineering libraries
+    (laravel-aws-pubsub, laravel-monolog-kinesis, payments-php, form-components,
+    laravel-mail-export, laravel-configcat, laravel-javascript-lang, countries,
+    go-queue-worker). No API client, no SDK, no OpenAPI, no OCPI code.
+- url: https://www.linkedin.com/company/podpoint
+  status: 200
+- url: https://www.linkedin.com/company/pod-point
+  status: 404
+  note: Handle is podpoint, not pod-point.
+- url: https://podenergy.com/news/pod-point-evolves-into-pod
+  status: 200
+- url: https://podenergy.com/news/pod-acquires-eo-charging
+  status: 200
+- url: https://podenergy.com/news/pod-partners-zapmap-public-ev-charging-payments
+  status: 200
+- url: https://www.legislation.gov.uk/uksi/2023/1168/contents/made
+  status: 200
+  note: The Public Charge Point Regulations 2023, the mandate recorded above.
+- url: https://chargepoints.dft.gov.uk/api/retrieve/registry/format/json/limit/1
+  status: 000
+  note: >-
+    DfT National Charge Point Registry API did not respond to this client. NOT used
+    as evidence either way. It is in any case the Department for Transport's API, not
+    Pod's, and would never be listed as a Pod API.
+
+artifacts:
+  openapiHarvested: false
+  specsCount: 0
+  reason: |
+    Nothing to harvest. Pod publishes no OpenAPI, Swagger, AsyncAPI, GraphQL schema,
+    JSON Schema, Postman collection or SDK. /openapi.json, /swagger.json, /api-docs
+    and /docs return 404 on every Pod host probed. No openapi/ directory was created
+    because creating one would have meant generating a spec from the OCPI standard
+    and attributing it to Pod, which would be fabrication. The OCPI version and
+    version-detail payloads Pod actually serves are recorded verbatim in the
+    mandate.howVerified block above; they are a module directory, not a contract, and
+    they are not stored as a spec.
+
+sources:
+- url: https://ocpi.podenergy.com/ocpi/cpo/versions
+  type: APIReference
+  note: The single piece of primary evidence. Anonymous HTTP 200, OCPI 2.2.1.
+- url: https://ocpi.podenergy.com/ocpi/cpo/2.2.1
+  type: APIReference
+  note: Module directory. cdrs/credentials/locations/sessions/tariffs SENDER;
+    commands/credentials/tokens RECEIVER.
+- url: https://github.com/ocpi/ocpi
+  type: Documentation
+  note: The OCPI standard itself, governed by the EVRoaming Foundation. External to Pod.
+- url: https://evroaming.org/wp-content/uploads/2024/11/OCPI-2.2.1-d2.pdf
+  type: Specification
+  note: OCPI 2.2.1-d2 specification PDF, HTTP 200. External to Pod.
+- url: https://www.legislation.gov.uk/uksi/2023/1168/contents/made
+  type: Regulation
+  note: >-
+    The Public Charge Point Regulations 2023. Open data duty on public charge point
+    operators, free of charge, machine readable, without terms and conditions.
+- url: https://podenergy.com/
+  type: Website
+  note: Post-rebrand marketing site. No developer, API, OCPI or open data page anywhere.
+- url: https://podenergy.com/news/pod-point-evolves-into-pod
+  type: Blog
+  note: February 2026 rebrand from Pod Point to Pod, plus the Pod Drive subscription.
+- url: https://podenergy.com/news/pod-acquires-eo-charging
+  type: Blog
+  note: May 2026 acquisition of depot and fleet charging specialist EO Charging.
+- url: https://en.wikipedia.org/wiki/Pod_Point
+  type: Reference
+  note: >-
+    Founded 2009 by Erik Fairbairn and Peter Hiscocks, London. IPO November 2021.
+    EDF took 53% in 2022 and completed acquisition and LSE delisting on 4 August 2025.
+    Third-largest UK public charging network as of 2025.
+- url: https://podenergy.com/.well-known/security.txt
+  type: Security
+  note: Valid security.txt, expires 2028-03-31.
+
+actions:
+  apisYmlUpdated: true
+  apisListed: 1
+  developerPortal: ''
+  portalConfirmed: false
+  reason: |
+    One API is listed and exactly one: the OCPI 2.2.1 CPO service, because it is
+    Pod's own host, it is live, it conforms to a public standard, and its version and
+    version-detail responses were retrieved anonymously and are quoted verbatim in
+    this file. developerPortal is empty and portalConfirmed is false because no
+    developer portal exists on any Pod domain — the subdomains do not resolve and the
+    paths 404. The undocumented mobile backend and the dead legacy consumer API are
+    recorded as observations in this review and appear nowhere in apis.yml.
