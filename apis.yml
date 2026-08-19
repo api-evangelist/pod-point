@@ -35,7 +35,7 @@ tags:
 - Grid
 created: '2026-07-27'
 modified: '2026-07-27'
-specificationVersion: '0.19'
+specificationVersion: '0.23'
 apis:
 - aid: pod-point:pod-point-ocpi-cpo-api
   name: Pod OCPI 2.2.1 CPO API
