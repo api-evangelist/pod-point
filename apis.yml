@@ -21,6 +21,17 @@ description: >-
   plumbing that regulation names is verifiably in place at Pod, but the open part of it
   is not obtainable anonymously from outside, and the company publishes no open data
   page, no OCPI token policy and no developer onboarding of any kind.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: false
+  label: Hosted service · you call their endpoint
+  confidence: medium
+  source:
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://podenergy.com/themes/custom/podpoint/images/favicon-96x96.png
 tags:
 - Energy
