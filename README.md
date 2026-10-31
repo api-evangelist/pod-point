@@ -1,4 +1,4 @@
-# Pod Point (pod-point)
+# Pod Point
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -66,63 +66,98 @@
 
 Pod Point — trading as Pod since its February 2026 rebrand, with pod-point.com now 301-redirecting to podenergy.com — is a British electric vehicle charging company founded in London in 2009 and wholly owned by EDF since its delisting from the London Stock Exchange in August 2025. It sells and installs home, workplace and fleet chargers, operates the third-largest public charging network in the United Kingdom across Tesco and Lidl car parks, and acquired depot-charging specialist EO Charging in May 2026. It sits on the demand side of the UK electricity value chain, between the driver and the electricity supplier, as a Charge Point Operator rather than a metering, network or settlement body. Its API posture is narrow but real and honestly split: there is no developer portal, no OpenAPI, no Swagger and no consumer data API, yet a live OCPI 2.2.1 Charge Point Operator service runs at ocpi.podenergy.com whose version negotiation answers anonymously and enumerates a full module set, while every data module — locations, tariffs, sessions, CDRs — returns 401 Unauthorized without a bilaterally exchanged OCPI credentials token. Britain's Public Charge Point Regulations 2023 name OCPI 2.2.1 as the vehicle for open charge point data; the plumbing that regulation names is verifiably in place at Pod, but the open part of it is not obtainable anonymously from outside, and the company publishes no open data page, no OCPI token policy and no developer onboarding of any kind.
 
-**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/pod-point/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/pod-point/refs/heads/main/apis.yml)
+**Areas:** Energy · United Kingdom · EV Charging · Electric Vehicles · Utilities · Electricity · OCPI · Charge Point Operator · Smart Charging · Grid
 
-## Tags
+## Pod Point on APIs.io
 
-- Energy
-- United Kingdom
-- EV Charging
-- Electric Vehicles
-- Utilities
-- Electricity
-- OCPI
-- Charge Point Operator
-- Smart Charging
-- Grid
+Everything profiled for Pod Point is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/pod-point/](https://apis.io/providers/pod-point/)** — or go straight to one of the APIs or properties below.
 
-## Timestamps
+### APIs (1)
 
-- **Created:** 2026-07-27
-- **Modified:** 2026-07-27
+- [Pod OCPI 2.2.1 CPO API](https://apis.io/apis/pod-point/pod-point-ocpi-cpo-api/) — Pod's Open Charge Point Interface (OCPI) 2.2.1 service in the Charge Point Operator role, used for e-mobility roaming and as the technical vehicle named by…
 
-## APIs
+### Published properties
 
-### Pod OCPI 2.2.1 CPO API
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-Pod's Open Charge Point Interface (OCPI) 2.2.1 service in the Charge Point Operator role, used for e-mobility roaming and as the technical vehicle named by the UK Public Charge Point Regulations 2023 for charge point reference and availability data. Version discovery is anonymous: `GET /ocpi/cpo/versions` returned HTTP 200 on 2026-07-27 advertising version 2.2.1, and `GET /ocpi/cpo/2.2.1` returned HTTP 200 enumerating `cdrs`, `credentials`, `locations`, `sessions` and `tariffs` in the SENDER role plus `commands`, `credentials` and `tokens` in the RECEIVER role. Every one of those data modules returns HTTP 401 with OCPI `status_code` 2000 Unauthorized to an anonymous caller; access requires an OCPI credentials token exchanged bilaterally with Pod. Pod publishes no human documentation, no OpenAPI and no onboarding path for this API — the module list the service returns about itself is the only contract.
+#### Examples (4)
 
-- **Human URL:** [https://ocpi.podenergy.com/ocpi/cpo/versions](https://ocpi.podenergy.com/ocpi/cpo/versions)
-- **Base URL:** `https://ocpi.podenergy.com/ocpi/cpo/2.2.1`
+Example requests and responses.
 
-#### Tags
+- [Pod Point Ocpi Health](https://apis.io/examples/pod-point/pod-point-ocpi-health/)
+- [Pod Point Ocpi Unauthorized](https://apis.io/examples/pod-point/pod-point-ocpi-unauthorized/)
+- [Pod Point Ocpi Version Detail](https://apis.io/examples/pod-point/pod-point-ocpi-version-detail/)
+- [Pod Point Ocpi Versions](https://apis.io/examples/pod-point/pod-point-ocpi-versions/)
 
-- EV Charging
-- OCPI
-- Roaming
-- Charge Point Operator
-- Open Data
-- United Kingdom
+#### Security (3)
 
-#### Properties
+Authentication, trust centre, and vulnerability disclosure.
 
-- [API Reference](https://ocpi.podenergy.com/ocpi/cpo/versions)
-- [Documentation](https://github.com/ocpi/ocpi)
-- [Specification](https://evroaming.org/wp-content/uploads/2024/11/OCPI-2.2.1-d2.pdf)
-- [Regulation](https://www.legislation.gov.uk/uksi/2023/1168/contents/made)
+- [Pod Point Authentication](https://apis.io/security/pod-point/pod-point-authentication/)
+- [Pod Point Domain Security](https://apis.io/security/pod-point/pod-point-domain-security/)
+- [Pod Point Vulnerability Disclosure](https://apis.io/security/pod-point/pod-point-vulnerability-disclosure/)
 
-## Common Properties
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
 - [Website](https://podenergy.com/)
-- [Blog](https://podenergy.com/news)
 - [Support](https://help.pod-point.com/)
-- [GitHub Organization](https://github.com/Pod-Point)
-- [LinkedIn](https://www.linkedin.com/company/podpoint)
-- [Careers](https://careers.pod-point.com/)
-- [Security](https://podenergy.com/.well-known/security.txt)
-- [Terms of Service](https://podenergy.com/general-terms-and-conditions)
-- [Privacy Policy](https://podenergy.com/legal/privacy-notice)
+- [Blog](https://podenergy.com/news)
+- [Security](https://podenergy.com/security)
+- [Terms of service](https://podenergy.com/general-terms-and-conditions)
+- [Privacy policy](https://podenergy.com/legal/privacy-notice)
+- [GitHub](https://github.com/Pod-Point)
 
-## Maintainers
+## API Evangelist rating
 
-- **Kin Lane** — kin@apievangelist.com
+**Kin Score 26.8** — thin · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
+|---|---|
+| Discoverability | 73.2 |
+| Contract quality | 6.5 |
+| Contract governance | 18.2 |
+| Operational transparency | 13.2 |
+| Developer ergonomics | 39.3 |
+| Access clarity | 21.1 |
+
+**Agent readiness 4.5** — human-only
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | — |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | derived (partial credit) |
+| OpenAPI Examples | documented (partial credit) |
+| Rate Limit Signal | — |
+| Event Surface Described | — |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+
+**Regulatory alignment 25.4** — Energy & Utilities
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/pod-point/](https://apis.io/providers/pod-point/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Pod Point: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/pod-point/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
